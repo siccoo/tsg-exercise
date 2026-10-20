@@ -1,0 +1,24 @@
+{
+  "name": "mama-t-orders-mcp",
+  "version": "1.0.0",
+  "description": "MCP server (Chord custom tool) for Mama T's Small Chops: menu, quotes, Paystack test-mode payment links and payment verification",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "PAYSTACK_MODE=mock node --watch server.js",
+    "test": "node --test"
+  },
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "express": "^4.22.3",
+    "zod": "^3.25.76"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  }
+}
