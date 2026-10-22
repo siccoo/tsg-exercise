@@ -3,7 +3,7 @@ import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import { createApp } from "../src/app.js";
+import { createApp } from "../src/application.js";
 import { createPaystackClient } from "../src/paystack.js";
 
 const TOKEN = "test-token";
