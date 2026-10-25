@@ -1,15 +1,5 @@
 # Deployment field notes
 
-> **Michael, read this first (delete this box before submitting).** Notes 1 and 2
-> are real: they came up while the code was being built. Notes 3+ are empty
-> slots for what you hit while deploying on Chord, which you haven't done yet.
-> Don't invent problems. TSG says 2–3 specific, real notes beat a long list,
-> and you'll be asked about them live. While you deploy, copy every error
-> message, take screenshots, and note the time. Delete the "Things to watch
-> for" list before submitting.
-
----
-
 ## 1. The MCP server rejected plain-JSON clients with HTTP 406
 
 **What happened.** I tested the deployed-style server with a plain
@@ -71,36 +61,40 @@ starter template (MCP server + Vercel button) would save every candidate the
 same hour. Also say whether localhost tunnels (cloudflared/ngrok) are allowed,
 since "private addresses are blocked" makes people unsure.
 
-## 3. _[Your first real Chord deployment problem]_
+## 3. Tobi said the tools were down, but Chord had a login-protected URL
 
-**What happened.** _(exact error text / screenshot, where in the UI or API)_
+**What happened.** With the teammate created and the MCP tool connected, my
+first in-app test message ("Hi, I need small chops for 15 people on Saturday,
+delivered to Yaba") got this reply:
 
-**How I worked out the cause.**
+> I can't pull up the menu or prices right now, because the ordering system
+> (the tools I use for the menu, quotes and payment links) isn't reachable this
+> turn. It looks like a temporary platform issue.
 
-**How I fixed it or worked around it.**
+It did the right thing: it refused to quote prices from memory, kept the order
+details (15 people, Saturday 24 October, Yaba) and asked for the delivery time.
+But "temporary platform issue" was wrong. Nothing was down.
 
-**What I'd change in Chord, its docs or API.**
+**How I worked out the cause.** I sent the same `tools/list` call to both of the
+project's Vercel URLs, using my token:
 
-## 4. _[Optional second one]_
+- `https://mama-t-whatsapp-order.vercel.app/mcp` returned all four tools.
+- `https://mama-t-whatsapp-order-siccoos-projects.vercel.app/mcp`, the
+  team-scoped URL, returned `401 {"message":"Protected by Vercel
+  Authentication", ...}` and never reached my server.
 
----
+Chord had the team-scoped URL. Vercel shows that URL next to the project, and it
+looks just as "production" as the short one, but Deployment Protection puts it
+behind a Vercel login. Every tool call from Chord hit that login wall.
 
-### Things to watch for while deploying (delete before submitting)
+**Fix.** I changed the tool's URL in Chord to
+`https://mama-t-whatsapp-order.vercel.app/mcp`. The next test reached the tools
+and Tobi quoted from the real menu.
 
-From reading the docs, these look like likely snags. Only write them up if they
-actually happen to you:
-
-- The simulator is a separate "Chord Connect" app that needs approval and
-  consent. Does your teammate show up in it straight away?
-- Skill zip upload: is `SKILL.md` marked Instructions automatically? Does the
-  agent actually read `references/business.md`? ("Why this reply" is admin-only.)
-- Teammate starts **paused** and "activation follows workspace permissions".
-  Can you activate it yourself?
-- Tool shows "Needs connecting" vs "On". Does the MCP server's bearer token
-  save correctly? Does tool discovery list the 4 tools?
-- Vercel Deployment Protection returns an HTML login page, not JSON. Chord's
-  health check would see a non-MCP response.
-- Does the agent call `check_payment` when the customer just says "I've paid",
-  or does it answer without the tool? If so, you tightened `SKILL.md`: what changed?
-- Credits: how many did one full test conversation cost? (Usage page / API.)
-- Date handling: does the agent resolve "Saturday" to the right date?
+**What I'd change in Chord.** When a tool call fails, tell the builder why. The
+agent turned an HTTP 401 from a login page into "a temporary platform issue",
+which sent me looking for an outage that wasn't there. In the builder console,
+show the failed call's HTTP status and the first part of the response body. When
+a tool is saved, run a `tools/list` call and refuse a URL that answers with a
+login page or a non-JSON-RPC body, with a hint about hosting protection
+(Vercel, Netlify and Cloudflare Access all do this).

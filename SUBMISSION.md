@@ -15,8 +15,8 @@ dashboard. Those go to a human, and the go-live note says what each would need.
 | # | Deliverable | Where |
 |---|---|---|
 | 1 | Role + problem statement | This page |
-| 2 | Working agent | Teammate **Tobi – Mama T's Orders** on Chord account `<your Chord email>`, live in the simulator |
-| 3 | Code + README | `<GitHub repo link>`: `skill/`, `mcp-server/`, `README.md` |
+| 2 | Working agent | Teammate **Tobi – Mama T's Orders** on Chord account `chilakamichael001@gmail.com`, live in the simulator |
+| 3 | Code + README | https://github.com/siccoo/tsg-exercise: `skill/`, `mcp-server/`, `README.md` |
 | 4 | 3-minute recording | `<Drive link to video>` |
 | 5 | Deployment field notes | `docs/FIELD_NOTES.md` |
 | 6 | Go-live note | `docs/GO_LIVE_NOTE.md` |

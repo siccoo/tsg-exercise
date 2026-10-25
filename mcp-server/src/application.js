@@ -51,6 +51,17 @@ export function createApp({ env = process.env, paystack } = {}) {
   // (Chord's docs don't state which Accept header it sends).
   app.post("/mcp", (req, _res, next) => {
     const accept = String(req.headers.accept ?? "");
+    // Record what the client really sends, so the field notes can cite it.
+    console.log(
+      JSON.stringify({
+        at: new Date().toISOString(),
+        event: "mcp_request",
+        method: req.body?.method,
+        accept: req.headers.accept ?? null,
+        protocol_version: req.headers["mcp-protocol-version"] ?? null,
+        user_agent: req.headers["user-agent"] ?? null,
+      }),
+    );
     if (
       !(
         accept.includes("application/json") &&
